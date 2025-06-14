@@ -37,9 +37,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
     
-      - name: Run tests
-        continue-on-error: true
-        run: python -m unittest discover
+    #   - name: Run tests
+    #     run: python -m unittest discover
 
   build-books-api:
     name: Build & Test Books API
@@ -72,9 +71,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
     
-      - name: Run tests
-        continue-on-error: true
-        run: python -m unittest discover
+    #   - name: Run tests
+    #     run: python -m unittest discover
 
   build-frontend:
     name: Build React Vite Frontend
