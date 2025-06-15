@@ -11,7 +11,7 @@ services:
     ports:
       - '5000:5000'
     volumes:
-      - ./auth-api:/app
+      - ./auth-api:/app:ro
     env_file:
      - ./env/auth.env
     depends_on:
@@ -22,7 +22,7 @@ services:
     ports:
       - '5001:5001'
     volumes:
-      - ./books-api:/app
+      - ./books-api:/app:ro
     env_file:
      - ./env/books.env
     depends_on:
