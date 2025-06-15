@@ -13,7 +13,8 @@ services:
     volumes:
       - ./auth-api:/app:ro
     env_file:
-     - ./env/auth.env
+     - ./auth-api/.env
+     - .env.local
     depends_on:
       - mongodb
   
@@ -24,7 +25,8 @@ services:
     volumes:
       - ./books-api:/app:ro
     env_file:
-     - ./env/books.env
+     - ./books-api/.env
+     - .env.local
     depends_on:
       - auth
   
