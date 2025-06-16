@@ -108,7 +108,7 @@ jobs:
         run: npm run build
 
       - name: Debug dist folder
-        run: ls -la front-end/dist
+        run: ls -la
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
