@@ -107,8 +107,8 @@ jobs:
       - name: Build website
         run: npm run build
 
-      - name: Debug dist folder
-        run: ls -la
+      - name: Debug build folder
+        run: ls
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
