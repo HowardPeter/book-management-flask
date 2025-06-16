@@ -8,8 +8,9 @@ load_dotenv()
 MONGODB_USERNAME = os.environ.get("MONGODB_USERNAME")
 MONGODB_PASSWORD = os.environ.get("MONGODB_PASSWORD")
 MONGODB_DB = os.environ.get("MONGODB_DB")
+MONGODB_HOST = os.environ.get("MONGODB_HOST")
 
-mongo_uri = f"mongodb://{MONGODB_USERNAME}:{MONGODB_PASSWORD}@mongodb:27017/{MONGODB_DB}?authSource=admin"
+mongo_uri = f"mongodb://{MONGODB_USERNAME}:{MONGODB_PASSWORD}@{MONGODB_HOST}:27017/{MONGODB_DB}?authSource=admin"
 client = MongoClient(mongo_uri)
 
 def check_connection():
