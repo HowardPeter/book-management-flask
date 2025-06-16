@@ -59,8 +59,8 @@ jobs:
         run: python -m unittest discover -s tests -p "test_*.py"
         env:
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-          MONGODB_USERNAME: admin
-          MONGODB_PASSWORD: secret123
+          MONGODB_USERNAME: root
+          MONGODB_PASSWORD: secret
           MONGODB_HOST: mongodb
           MONGODB_DB: test_auth
 
