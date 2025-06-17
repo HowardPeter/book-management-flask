@@ -55,6 +55,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
     
+      - name: Debug env
+        run: |
+          echo "Host: $MONGODB_HOST"
+          echo "Username: $MONGODB_USERNAME"
+          echo "Password: $MONGODB_PASSWORD"
+          echo "DB: $MONGODB_DB"
+
       - name: Run tests
         run: python -m unittest discover -s tests -p "test_*.py"
         env:
@@ -63,13 +70,6 @@ jobs:
           MONGODB_PASSWORD: secret
           MONGODB_HOST: mongodb
           MONGODB_DB: test_auth
-      
-      - name: Debug env
-        run: |
-          echo "Host: $MONGODB_HOST"
-          echo "Username: $MONGODB_USERNAME"
-          echo "Password: $MONGODB_PASSWORD"
-          echo "DB: $MONGODB_DB"
 
   # build-books-api:
   #   name: Build & Test Books API
