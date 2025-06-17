@@ -57,20 +57,13 @@ jobs:
             ${{ runner.os }}-pip-
 
       - name: Install dependencies
-        # if: steps.cache-pip.outputs.cache-hit != 'true'
         run: |
           python -m pip install --upgrade pip
-          pip install -r auth-api/requirements.txt
+          pip install -r requirements.txt
 
       - name: Run tests
         continue-on-error: true
-        run: python -m unittest discover -s tests -p "test_*.py"
-        # env:
-        #   JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-        #   MONGODB_USERNAME: root
-        #   MONGODB_PASSWORD: secret
-        #   MONGODB_HOST: mongodb
-        #   MONGODB_DB: test_auth
+        run: python -m unittest discover -s tests -p "test_*.py
 
       - name: Debug env
         run: |
@@ -79,43 +72,72 @@ jobs:
           echo "Password: $MONGODB_PASSWORD"
           echo "DB: $MONGODB_DB"
 
-  # build-books-api:
-  #   name: Build & Test Books API
-  #   needs: build-auth-api
-  #   runs-on: ubuntu-latest
-  #   defaults:
-  #     run:
-  #       working-directory: books-api
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
+  build-books-api:
+    name: Build & Test Books API
+    needs: build-auth-api
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: books-api
 
-  #     - name: Set up Python
-  #       uses: actions/setup-python@v5
-  #       with:
-  #         python-version: '3.12'
+    env:
+      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+      MONGODB_USERNAME: root
+      MONGODB_PASSWORD: secret
+      MONGODB_HOST: mongodb
+      MONGODB_DB: test_auth
 
-  #     - name: Cache pip dependencies
-  #       id: cache-pip
-  #       uses: actions/cache@v4
-  #       with:
-  #         path: ~/.cache/pip
-  #         key: ${{ runner.os }}-pip-${{ hashFiles('books-api/requirements.txt') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-pip-
+    services:
+      mongodb:
+        image: mongo
+        ports:
+          - 27017:27017
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: secret
+        options: >-
+          --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
-  #     - name: Install dependencies
-  #       if: steps.cache-pip.outputs.cache-hit != 'true'
-  #       run: |
-  #         python -m pip install --upgrade pip
-  #         pip install -r requirements.txt
-    
-  #     - name: Run tests
-  #       run: python -m unittest discover -s tests -p "test_*.py"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Cache pip dependencies
+        id: cache-pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('books-api/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests
+        continue-on-error: true
+        run: python -m unittest discover -s tests -p "test_*.py
+
+      - name: Debug env
+        run: |
+          echo "Host: $MONGODB_HOST"
+          echo "Username: $MONGODB_USERNAME"
+          echo "Password: $MONGODB_PASSWORD"
+          echo "DB: $MONGODB_DB"
 
   build-frontend:
     name: Build React Vite Frontend
-    needs: build-auth-api
+    needs: build-books-api
     runs-on: ubuntu-latest
     defaults:
       run:

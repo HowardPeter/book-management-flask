@@ -16,7 +16,7 @@ class AuthRoutesTestCase(unittest.TestCase):
     def tearDown(self):
         users_collection.delete_many({'username': self.test_user['username']})
 
-    def test_register_success(self):
+    def test_register_success(self):    
         response = self.client.post('/register',
             data=json.dumps(self.test_user),
             content_type='application/json'
