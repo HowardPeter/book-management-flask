@@ -17,6 +17,13 @@ jobs:
       run:
         working-directory: auth-api
 
+    env:
+      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+      MONGODB_USERNAME: root
+      MONGODB_PASSWORD: secret
+      MONGODB_HOST: mongodb
+      MONGODB_DB: test_auth
+
     services:
       mongodb:
         image: mongo
@@ -50,7 +57,7 @@ jobs:
             ${{ runner.os }}-pip-
 
       - name: Install dependencies
-        if: steps.cache-pip.outputs.cache-hit != 'true'
+        # if: steps.cache-pip.outputs.cache-hit != 'true'
         run: |
           python -m pip install --upgrade pip
           pip install -r auth-api/requirements.txt
@@ -58,12 +65,12 @@ jobs:
       - name: Run tests
         continue-on-error: true
         run: python -m unittest discover -s tests -p "test_*.py"
-        env:
-          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-          MONGODB_USERNAME: root
-          MONGODB_PASSWORD: secret
-          MONGODB_HOST: mongodb
-          MONGODB_DB: test_auth
+        # env:
+        #   JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+        #   MONGODB_USERNAME: root
+        #   MONGODB_PASSWORD: secret
+        #   MONGODB_HOST: mongodb
+        #   MONGODB_DB: test_auth
 
       - name: Debug env
         run: |
