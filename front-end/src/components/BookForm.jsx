@@ -23,7 +23,7 @@ function BookForm() {
 
   const fetchBook = async () => {
     try {
-      const response = await axios.get(`http://localhost:5001/books/${id}`, {
+      const response = await axios.get(`/books/books/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setBook(response.data);
@@ -45,14 +45,14 @@ function BookForm() {
 
     try {
       if (id) {
-        await axios.put(`http://localhost:5001/books/${id}`, formData, {
+        await axios.put(`/books-api/books/${id}`, formData, {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'multipart/form-data',
           }
         });
       } else {
-        await axios.post('http://localhost:5001/books', formData, {
+        await axios.post('/books-api/books', formData, {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'multipart/form-data',

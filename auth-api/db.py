@@ -9,9 +9,19 @@ MONGODB_USERNAME = os.environ.get("MONGODB_USERNAME")
 MONGODB_PASSWORD = os.environ.get("MONGODB_PASSWORD")
 MONGODB_DB = os.environ.get("MONGODB_DB")
 MONGODB_HOST = os.environ.get("MONGODB_HOST")
+APP_ENV = os.getenv("APP_ENV", "production")
 
-mongo_uri = f"mongodb://{MONGODB_USERNAME}:{MONGODB_PASSWORD}@{MONGODB_HOST}:27017/{MONGODB_DB}?authSource=admin"
-client = MongoClient(mongo_uri)
+mongo_uri_dev = f"mongodb://{MONGODB_USERNAME}:{MONGODB_PASSWORD}@{MONGODB_HOST}:27017/{MONGODB_DB}?authSource=admin"
+mongo_uri_prod = f"mongodb+srv://{MONGODB_USERNAME}:{MONGODB_PASSWORD}@{MONGODB_HOST}/{MONGODB_DB}?retryWrites=true&w=majority"
+
+if APP_ENV == "development":
+    print("⚙️ Running in dev mode")
+    print("MogoDB URI:", mongo_uri_dev)
+    client = MongoClient(mongo_uri_dev)
+else:
+    print("🚀 Running in production mode")
+    print("MogoDB URI:", mongo_uri_prod)
+    client = MongoClient(mongo_uri_prod)
 
 def check_connection():
     try:
@@ -22,5 +32,9 @@ def check_connection():
         import sys
         sys.exit(1)
 
-db = client[MONGODB_DB]
-users_collection = db.users
+def get_db():
+    db = client[MONGODB_DB]
+    return db
+
+def get_users_collection():
+    return get_db().users

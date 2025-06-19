@@ -1,9 +1,15 @@
 from flask import request, jsonify
 from flask_jwt_extended import create_access_token
 import bcrypt
-from db import users_collection
+from db import get_users_collection
+
+users_collection = get_users_collection()
 
 def register_routes(app):
+    @app.route('/', methods=['GET'])
+    def root():
+        return "Flask is running", 200
+    
     @app.route('/register', methods=['POST'])
     def register():
         data = request.get_json()

@@ -1,12 +1,12 @@
 services:
-  mongodb:
-    image: mongo
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: secret123
-    volumes:
-      - data:/data/db
-      
+  # mongodb:
+  #   image: mongo
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: admin
+  #     MONGO_INITDB_ROOT_PASSWORD: secret123
+  #   volumes:
+  #     - data:/data/db
+
   auth:
     build: ./auth-api
     ports:
@@ -14,10 +14,13 @@ services:
     volumes:
       - ./auth-api:/app:ro
     env_file:
-     - ./auth-api/.env
      - .env.local
-    depends_on:
-      - mongodb
+    environment:
+      - MONGODB_USERNAME=phuocnt
+      - MONGODB_PASSWORD=glSn3ezpdrYLJtoD
+      - MONGODB_HOST=clusterdeploy.bseek6t.mongodb.net
+      - MONGODB_DB=users_dev
+      - APP_ENV=production
 
   books:
     build: ./books-api
@@ -26,15 +29,22 @@ services:
     volumes:
       - ./books-api:/app:ro
     env_file:
-     - ./books-api/.env
      - .env.local
+    environment:
+      - MONGODB_USERNAME=phuocnt
+      - MONGODB_PASSWORD=glSn3ezpdrYLJtoD
+      - MONGODB_HOST=clusterdeploy.bseek6t.mongodb.net
+      - MONGODB_DB=books_dev
+      - APP_ENV=production
     depends_on:
       - auth
-  
+
   frontend:
-    build: ./front-end
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile.prod
     ports:
-      - '3000:5173'
+      - '8080:80'
     volumes:
       - ./front-end:/app/:delegated
       - /app/node_modules

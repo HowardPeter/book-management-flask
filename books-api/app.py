@@ -21,11 +21,17 @@ MONGODB_USERNAME = os.environ.get("MONGODB_USERNAME")
 MONGODB_PASSWORD = os.environ.get("MONGODB_PASSWORD")
 MONGODB_DB = os.environ.get("MONGODB_DB")
 MONGODB_HOST = os.environ.get("MONGODB_HOST")
+APP_ENV = os.getenv("APP_ENV", "production")
 
-# MongoDB connection
-# mongo_uri = os.environ.get("MONGO_URI")
-mongo_uri = f"mongodb://{MONGODB_USERNAME}:{MONGODB_PASSWORD}@{MONGODB_HOST}:27017/{MONGODB_DB}?authSource=admin"
-client = MongoClient(mongo_uri)
+mongo_uri_dev = f"mongodb://{MONGODB_USERNAME}:{MONGODB_PASSWORD}@{MONGODB_HOST}:27017/{MONGODB_DB}?authSource=admin"
+mongo_uri_prod = f"mongodb+srv://{MONGODB_USERNAME}:{MONGODB_PASSWORD}@{MONGODB_HOST}/{MONGODB_DB}?retryWrites=true&w=majority"
+
+if APP_ENV == "development":
+    print("⚙️ Running in dev mode")
+    client = MongoClient(mongo_uri_dev)
+else:
+    print("🚀 Running in production mode")
+    client = MongoClient(mongo_uri_prod)
 
 try:
     # Thử kết nối với MongoDB server
@@ -39,6 +45,10 @@ except ConnectionFailure as e:
     
 db = client[MONGODB_DB]
 books_collection = db.books
+
+@app.route('/', methods=['GET'])
+def root():
+    return "Flask is running", 200
 
 @app.route('/books', methods=['POST'])
 @jwt_required()
