@@ -1,6 +1,9 @@
-name: Action CI for backend
+name: Action CI build
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
@@ -13,6 +16,28 @@ jobs:
     defaults:
       run:
         working-directory: auth-api
+
+    env:
+      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+      MONGODB_USERNAME: root
+      MONGODB_PASSWORD: secret
+      MONGODB_HOST: mongodb
+      MONGODB_DB: test_auth
+
+    services:
+      mongodb:
+        image: mongo
+        ports:
+          - 27017:27017
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: secret
+        options: >-
+          --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -27,19 +52,25 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('auth-api/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
 
       - name: Install dependencies
-        if: steps.cache-pip.outputs.cache-hit != 'true'
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-    
+
       - name: Run tests
         continue-on-error: true
-        run: python -m unittest discover
+        run: python -m unittest discover -s tests -p "test_*.py
+
+      - name: Debug env
+        run: |
+          echo "Host: $MONGODB_HOST"
+          echo "Username: $MONGODB_USERNAME"
+          echo "Password: $MONGODB_PASSWORD"
+          echo "DB: $MONGODB_DB"
 
   build-books-api:
     name: Build & Test Books API
@@ -48,6 +79,28 @@ jobs:
     defaults:
       run:
         working-directory: books-api
+
+    env:
+      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+      MONGODB_USERNAME: root
+      MONGODB_PASSWORD: secret
+      MONGODB_HOST: mongodb
+      MONGODB_DB: test_auth
+
+    services:
+      mongodb:
+        image: mongo
+        ports:
+          - 27017:27017
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: secret
+        options: >-
+          --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -62,19 +115,25 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('books-api/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
 
       - name: Install dependencies
-        if: steps.cache-pip.outputs.cache-hit != 'true'
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-    
+
       - name: Run tests
         continue-on-error: true
-        run: python -m unittest discover
+        run: python -m unittest discover -s tests -p "test_*.py
+
+      - name: Debug env
+        run: |
+          echo "Host: $MONGODB_HOST"
+          echo "Username: $MONGODB_USERNAME"
+          echo "Password: $MONGODB_PASSWORD"
+          echo "DB: $MONGODB_DB"
 
   build-frontend:
     name: Build React Vite Frontend
@@ -93,23 +152,24 @@ jobs:
           node-version: "20"
       
       - name: Cache Node modules  
-        id: cache-npm  
+        id: cache-npm
         uses: actions/cache@v4
         with:
-          path: ~/.npm
-          key: npm-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            npm-cache-${{ runner.os }}-
-
+          path: front-end/node_modules
+          key: deps-node-modules-${{ hashFiles('front-end/package-lock.json') }}
+      
       - name: Install dependencies
         if: steps.cache-npm.outputs.cache-hit != 'true'
         run: npm ci
 
-      - name: Build
+      - name: Build website
         run: npm run build
 
-      - name: Upload dist
+      - name: Debug build folder
+        run: ls
+
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: frontend-dist
-          path: frontend/dist
+          name: dist-files
+          path: front-end/dist
