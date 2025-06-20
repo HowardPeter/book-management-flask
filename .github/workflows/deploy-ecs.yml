@@ -1,0 +1,96 @@
+name: Update new deployment to ECS Service
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-docker-auth:
+    name: Build and push auth-api docker image
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: auth-api
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build & Push Docker image
+        uses: ./.github/docker
+        with:
+          image-name: books-auth-api
+
+  build-docker-books:
+    name: Build and push books-api docker image
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: books-api
+    
+    env:
+      IMAGE_NAME: books-book-api
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build & Push Docker image
+        uses: ./.github/docker
+        with:
+          image-name: books-book-api
+
+  build-docker-frontend:
+    name: Build and push frontend docker image
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: front-end
+    
+    env:
+      IMAGE_NAME: books-frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build & Push Docker image
+        uses: ./.github/docker
+        with:
+          image-name: books-frontend
+
+  deploy-ecs:
+    name: Deploy to ECS
+    needs: [build-docker-auth, build-docker-books, build-docker-frontend]
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: ap-southeast-1
+    
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-region: ${{ env.AWS_REGION }}
+
+      - name: Force new deployment to ECS Services
+        run: |
+          aws ecs update-service --cluster ${{ secrets.ECS_CLUSTER_NAME }} --service ${{ secrets.ECS_SERVICE_NAME_AUTH }} --force-new-deployment
+          aws ecs update-service --cluster ${{ secrets.ECS_CLUSTER_NAME }} --service ${{ secrets.ECS_SERVICE_NAME_BOOKS }} --force-new-deployment
+          aws ecs update-service --cluster ${{ secrets.ECS_CLUSTER_NAME }} --service ${{ secrets.ECS_SERVICE_NAME_FRONTEND }} --force-new-deployment
+        env:
+          AWS_REGION: ${{ env.AWS_REGION }}
+
+      - name: Debug ECS Services
+        run: |
+          echo "ECS Cluster: ${{ secrets.ECS_CLUSTER_NAME }}"
+          echo "ECS Service Auth: ${{ secrets.ECS_SERVICE_NAME_AUTH }}"
+          echo "ECS Service Books: ${{ secrets.ECS_SERVICE_NAME_BOOKS }}"
+          echo "ECS Service Frontend: ${{ secrets.ECS_SERVICE_NAME_FRONTEND }}"
+          aws ecs describe-services --cluster ${{ secrets.ECS_CLUSTER_NAME }} --services ${{ secrets.ECS_SERVICE_NAME_AUTH }} ${{ secrets.ECS_SERVICE_NAME_BOOKS }} ${{ secrets.ECS_SERVICE_NAME_FRONTEND }}
+        env:
+          AWS_REGION: ${{ env.AWS_REGION }}
