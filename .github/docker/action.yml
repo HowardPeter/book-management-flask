@@ -12,6 +12,11 @@ inputs:
   docker-password:
     description: 'Docker Hub password.'
     required: true
+  
+  context:
+    description: 'Context for the Docker build (default is current directory).'
+    required: false
+    default: '.'
 
 runs:
   using: 'composite'
@@ -22,7 +27,7 @@ runs:
 
     - name: Build & Push Docker image
       run: |
-        docker build -t ${{ inputs.docker-username }}/${{ inputs.image-name }}:latest .
+        docker build -t ${{ inputs.docker-username }}/${{ inputs.image-name }}:latest ${{ inputs.context }}
         docker push ${{ inputs.docker-username }}/${{ inputs.image-name }}:latest
       shell: bash
 

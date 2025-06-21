@@ -24,6 +24,7 @@ jobs:
           image-name: books-auth-api
           docker-username: ${{ secrets.DOCKER_USERNAME }}
           docker-password: ${{ secrets.DOCKER_PASSWORD }}
+          context: ./auth-api
 
   build-docker-books:
     name: Build and push books-api docker image
@@ -45,6 +46,7 @@ jobs:
           image-name: books-book-api
           docker-username: ${{ secrets.DOCKER_USERNAME }}
           docker-password: ${{ secrets.DOCKER_PASSWORD }}
+          context: ./books-api
 
   build-docker-frontend:
     name: Build and push frontend docker image
@@ -66,6 +68,7 @@ jobs:
           image-name: books-frontend
           docker-username: ${{ secrets.DOCKER_USERNAME }}
           docker-password: ${{ secrets.DOCKER_PASSWORD }}
+          context: ./front-end
 
   deploy-ecs:
     name: Deploy to ECS
