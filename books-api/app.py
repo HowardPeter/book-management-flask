@@ -48,7 +48,7 @@ books_collection = db.books
 
 @app.route('/', methods=['GET'])
 def root():
-    return "Flask is running", 200
+    return "Flask is running!!!", 200
 
 @app.route('/books', methods=['POST'])
 @jwt_required()

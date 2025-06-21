@@ -20,7 +20,7 @@ function Login() {
       login(response.data.token);
       history.push('/books');
     } catch (err) {
-      setError(err.response?.data?.error || 'An error occurred');
+      setError(err.response?.data?.error || 'An error occurred, check your credentials and connection and try again.');
     }
   };
 
