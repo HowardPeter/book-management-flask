@@ -22,6 +22,8 @@ jobs:
         uses: ./.github/docker
         with:
           image-name: books-auth-api
+          docker-username: ${{ secrets.DOCKER_USERNAME }}
+          docker-password: ${{ secrets.DOCKER_PASSWORD }}
 
   build-docker-books:
     name: Build and push books-api docker image
@@ -41,6 +43,8 @@ jobs:
         uses: ./.github/docker
         with:
           image-name: books-book-api
+          docker-username: ${{ secrets.DOCKER_USERNAME }}
+          docker-password: ${{ secrets.DOCKER_PASSWORD }}
 
   build-docker-frontend:
     name: Build and push frontend docker image
@@ -60,6 +64,8 @@ jobs:
         uses: ./.github/docker
         with:
           image-name: books-frontend
+          docker-username: ${{ secrets.DOCKER_USERNAME }}
+          docker-password: ${{ secrets.DOCKER_PASSWORD }}
 
   deploy-ecs:
     name: Deploy to ECS
