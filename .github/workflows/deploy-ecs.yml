@@ -1,6 +1,9 @@
 name: Update new deployment to ECS Service
 
 on:
+  push:
+    branches:
+      - production
   workflow_dispatch:
 
 permissions:
