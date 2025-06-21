@@ -1,0 +1,38 @@
+name: Build and push Docker image
+description: Build and push Docker image for the service.
+inputs:
+  image-name:
+    description: 'Name of the Docker image to build and push.'
+    required: true
+  
+  docker-username:
+    description: 'Docker Hub username.'
+    required: true
+  
+  docker-password:
+    description: 'Docker Hub password.'
+    required: true
+  
+  context:
+    description: 'Context for the Docker build (default is current directory).'
+    required: false
+    default: '.'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Login to Docker Hub
+      run: echo ${{ inputs.docker-password }} | docker login -u ${{ inputs.docker-username }} --password-stdin
+      shell: bash
+
+    - name: Build & Push Docker image
+      run: |
+        docker build -t ${{ inputs.docker-username }}/${{ inputs.image-name }}:latest ${{ inputs.context }}
+        docker push ${{ inputs.docker-username }}/${{ inputs.image-name }}:latest
+      shell: bash
+
+    - name: Debug Docker image
+      run: |
+        echo "Docker image: ${{ inputs.docker-username }}/${{ inputs.image-name }}:latest"
+        docker images | grep ${{ inputs.docker-username }}/${{ inputs.image-name }}
+      shell: bash

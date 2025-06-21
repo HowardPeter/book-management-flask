@@ -1,12 +1,10 @@
 name: Action CI build
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
+      - production
   workflow_dispatch:
 
 jobs:
