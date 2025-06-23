@@ -1,0 +1,143 @@
+/* Container chung */
+/* .book-list-container {
+    width: 100vw;
+    height: 100vh;
+    padding: 4rem;
+} */
+
+.book-list-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    padding: 4rem 4rem 2rem 4rem;
+    overflow: hidden;
+    /* ngăn scroll toàn trang */
+}
+
+/* Tiêu đề và nút thêm */
+.book-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-shrink: 0;
+}
+
+.book-list-header h2 {
+    font-size: 1.5rem;
+    color: black;
+}
+
+.add-book-btn {
+    background-color: #1e56a0;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-right: 1rem;
+}
+
+.logout-btn {
+    background-color: #474a4f;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.add-book-btn:hover {
+    background-color: #12407c;
+}
+
+.logout-btn:hover {
+    background-color: #3a3a3c;
+}
+
+/* Bảng */
+.book-table-scroll {
+    flex-grow: 1;
+    /* phần còn lại dùng cho bảng */
+    overflow-y: auto;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    scrollbar-width: none;
+}
+
+.book-table {
+    width: 100%;
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    border-collapse: collapse;
+}
+
+.book-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.book-table th,
+.book-table td {
+    text-align: center;
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+    color: black;
+}
+
+.book-table th {
+    background-color: #fafafa;
+    font-weight: 700;
+    color: #333;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+/* Hình ảnh */
+.book-cover {
+    width: 60px;
+    height: 90px;
+    object-fit: cover;
+    background-color: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Nút hành động */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.edit-btn,
+.delete-btn {
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.edit-btn {
+    background-color: #28a745;
+}
+
+.delete-btn {
+    background-color: #e5533c;
+}
+
+.edit-btn:hover {
+    background-color: #218838;
+}
+
+.delete-btn:hover {
+    background-color: #d63c25;
+}

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import './BookForm.css';
+import './Body.css'
 
 function BookForm() {
   const { id } = useParams();
@@ -45,14 +47,26 @@ function BookForm() {
 
     try {
       if (id) {
-        await axios.put(`/books-api/books/${id}`, formData, {
+        // await axios.put(`/books-api/books/${id}`, formData, {
+        //   headers: {
+        //     Authorization: `Bearer ${token}`,
+        //     'Content-Type': 'multipart/form-data',
+        //   }
+        // });
+        await axios.put(`http://localhost:5001/books/${id}`, formData, {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'multipart/form-data',
           }
         });
       } else {
-        await axios.post('/books-api/books', formData, {
+        // await axios.post('/books-api/books', formData, {
+        //   headers: {
+        //     Authorization: `Bearer ${token}`,
+        //     'Content-Type': 'multipart/form-data',
+        //   }
+        // });
+        await axios.post('http://localhost:5001/books', formData, {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'multipart/form-data',
@@ -79,10 +93,10 @@ function BookForm() {
   };
 
   return (
-    <div>
+    <div className="book-form-container">
       <h2>{id ? 'Edit Book' : 'Add New Book'}</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
+      {error && <p className="error-message">{error}</p>}
+      <form className="book-form" onSubmit={handleSubmit}>
         <div>
           <label>Name:</label>
           <input
@@ -119,8 +133,16 @@ function BookForm() {
             onChange={handleImageChange}
           />
         </div>
-        <button type="submit">Save</button>
-        <button type="button" onClick={() => history.push('/books')}>Cancel</button>
+        <div className="book-form-buttons">
+          <button type="submit" className="save-btn">Save</button>
+          <button
+            type="button"
+            className="cancel-btn"
+            onClick={() => history.push('/books')}
+          >
+            Cancel
+          </button>
+        </div>
       </form>
     </div>
   );
