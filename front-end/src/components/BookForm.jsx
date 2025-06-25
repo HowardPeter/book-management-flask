@@ -47,26 +47,14 @@ function BookForm() {
 
     try {
       if (id) {
-        // await axios.put(`/books-api/books/${id}`, formData, {
-        //   headers: {
-        //     Authorization: `Bearer ${token}`,
-        //     'Content-Type': 'multipart/form-data',
-        //   }
-        // });
-        await axios.put(`http://localhost:5001/books/${id}`, formData, {
+        await axios.put(`/books-api/books/${id}`, formData, {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'multipart/form-data',
           }
         });
       } else {
-        // await axios.post('/books-api/books', formData, {
-        //   headers: {
-        //     Authorization: `Bearer ${token}`,
-        //     'Content-Type': 'multipart/form-data',
-        //   }
-        // });
-        await axios.post('http://localhost:5001/books', formData, {
+        await axios.post('/books-api/books', formData, {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'multipart/form-data',

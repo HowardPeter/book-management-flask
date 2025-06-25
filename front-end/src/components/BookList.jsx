@@ -16,10 +16,7 @@ function BookList() {
 
   const fetchBooks = async () => {
     try {
-      // const response = await axios.get('/books-api/books', {
-      //   headers: { Authorization: `Bearer ${token}` }
-      // });
-      const response = await axios.get('http://localhost:5001/books', {
+      const response = await axios.get('/books-api/books', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setBooks(response.data);
@@ -35,10 +32,7 @@ function BookList() {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this book?')) {
       try {
-        // await axios.delete(`/books-api/books/${id}`, {
-        //   headers: { Authorization: `Bearer ${token}` }
-        // });
-        await axios.delete(`http://localhost:5001/books/${id}`, {
+        await axios.delete(`/books-api/books/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         fetchBooks();
