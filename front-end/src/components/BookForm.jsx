@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import './BookForm.css';
+import './Body.css'
 
 function BookForm() {
   const { id } = useParams();
@@ -79,10 +81,10 @@ function BookForm() {
   };
 
   return (
-    <div>
+    <div className="book-form-container">
       <h2>{id ? 'Edit Book' : 'Add New Book'}</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
+      {error && <p className="error-message">{error}</p>}
+      <form className="book-form" onSubmit={handleSubmit}>
         <div>
           <label>Name:</label>
           <input
@@ -119,8 +121,16 @@ function BookForm() {
             onChange={handleImageChange}
           />
         </div>
-        <button type="submit">Save</button>
-        <button type="button" onClick={() => history.push('/books')}>Cancel</button>
+        <div className="book-form-buttons">
+          <button type="submit" className="save-btn">Save</button>
+          <button
+            type="button"
+            className="cancel-btn"
+            onClick={() => history.push('/books')}
+          >
+            Cancel
+          </button>
+        </div>
       </form>
     </div>
   );

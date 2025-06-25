@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import axios from 'axios';
+import './AuthForm.css';
+import './Body.css'
 
 function Register() {
   const [username, setUsername] = useState('');
@@ -22,33 +24,32 @@ function Register() {
   };
 
   return (
-    <div>
-      <h2>Register</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Username:</label>
+    <div className="auth-container">
+      <div className="auth-card">
+        <h2 className="auth-title">Create an account</h2>
+        <p className="auth-subtitle">Enter your details to register</p>
+        {error && <div className="auth-error">{error}</div>}
+        <form className="auth-form" onSubmit={handleSubmit}>
           <input
             type="text"
+            placeholder="Enter your name"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
           />
-        </div>
-        <div>
-          <label>Password:</label>
           <input
             type="password"
+            placeholder="Enter your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-        </div>
-        <button type="submit">Register</button>
-      </form>
-      <p>
-        Already have an account? <Link to="/login">Login</Link>
-      </p>
+          <button type="submit" className="auth-button">Register</button>
+        </form>
+        <p className="auth-footer">
+          Already have an account? <Link to="/login">Login</Link>
+        </p>
+      </div>
     </div>
   );
 }

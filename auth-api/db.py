@@ -16,11 +16,9 @@ mongo_uri_prod = f"mongodb+srv://{MONGODB_USERNAME}:{MONGODB_PASSWORD}@{MONGODB_
 
 if APP_ENV == "development":
     print("⚙️ Running in dev mode")
-    print("MogoDB URI:", mongo_uri_dev)
     client = MongoClient(mongo_uri_dev)
 else:
     print("🚀 Running in production mode")
-    print("MogoDB URI:", mongo_uri_prod)
     client = MongoClient(mongo_uri_prod)
 
 def check_connection():
