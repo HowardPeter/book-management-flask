@@ -91,9 +91,21 @@ jobs:
 
       - name: Force new deployment to ECS Services
         run: |
-          aws ecs update-service --cluster ${{ secrets.ECS_CLUSTER_NAME }} --service ${{ secrets.ECS_SERVICE_NAME_AUTH }} --force-new-deployment
-          aws ecs update-service --cluster ${{ secrets.ECS_CLUSTER_NAME }} --service ${{ secrets.ECS_SERVICE_NAME_BOOKS }} --force-new-deployment
-          aws ecs update-service --cluster ${{ secrets.ECS_CLUSTER_NAME }} --service ${{ secrets.ECS_SERVICE_NAME_FRONTEND }} --force-new-deployment
+          aws ecs update-service \
+            --cluster ${{ secrets.ECS_CLUSTER_NAME }} \
+            --service ${{ secrets.ECS_SERVICE_NAME_AUTH }} \
+            --desired-count 1 \
+            --force-new-deployment
+          aws ecs update-service \
+            --cluster ${{ secrets.ECS_CLUSTER_NAME }} \
+            --service ${{ secrets.ECS_SERVICE_NAME_BOOKS }} \
+            --desired-count 1 \
+            --force-new-deployment
+          aws ecs update-service \
+            --cluster ${{ secrets.ECS_CLUSTER_NAME }} \
+            --service ${{ secrets.ECS_SERVICE_NAME_FRONTEND }} \
+            --desired-count 1 \
+            --force-new-deployment
         env:
           AWS_REGION: ${{ env.AWS_REGION }}
 
@@ -103,6 +115,8 @@ jobs:
           echo "ECS Service Auth: ${{ secrets.ECS_SERVICE_NAME_AUTH }}"
           echo "ECS Service Books: ${{ secrets.ECS_SERVICE_NAME_BOOKS }}"
           echo "ECS Service Frontend: ${{ secrets.ECS_SERVICE_NAME_FRONTEND }}"
-          aws ecs describe-services --cluster ${{ secrets.ECS_CLUSTER_NAME }} --services ${{ secrets.ECS_SERVICE_NAME_AUTH }} ${{ secrets.ECS_SERVICE_NAME_BOOKS }} ${{ secrets.ECS_SERVICE_NAME_FRONTEND }}
+          aws ecs describe-services \
+            --cluster ${{ secrets.ECS_CLUSTER_NAME }} \
+            --services ${{ secrets.ECS_SERVICE_NAME_AUTH }} ${{ secrets.ECS_SERVICE_NAME_BOOKS }} ${{ secrets.ECS_SERVICE_NAME_FRONTEND }}
         env:
           AWS_REGION: ${{ env.AWS_REGION }}
