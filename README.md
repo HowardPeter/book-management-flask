@@ -5,34 +5,94 @@ This is a microservices-based web application for managing book information. The
 - Books Service (books-api)
 - React Frontend (front-end)
 
+## CI/CD with GitHub Actions
+
+This project uses GitHub Actions for continuous integration and deployment. The workflow includes automated testing, linting, Docker image building and ECS deploying.
+
+### Workflow Setup
+
+1. **Add Required Secrets**
+   To enable the GitHub Actions workflows, you need to configure the following secrets in your repository:
+
+   * `JWT_SECRET_KEY`: A secure string used for signing JWT tokens in backend services.
+   * `DOCKER_USERNAME`: Your Docker Hub (or other container registry) username.
+   * `DOCKER_PASSWORD`: Your Docker Hub password or access token.
+   * `AWS_ACCESS_KEY_ID`: Access key ID of your AWS IAM user with ECS deployment permissions.
+   * `AWS_SECRET_ACCESS_KEY`: Secret access key corresponding to the AWS IAM user.
+   * `ECS_CLUSTER_NAME`: Name of your ECS cluster.
+   * `ECS_SERVICE_NAME_AUTH`: Name of the ECS service for the `auth-api`.
+   * `ECS_SERVICE_NAME_BOOKS`: Name of the ECS service for the `books-api`.
+   * `ECS_SERVICE_NAME_FRONTEND`: Name of the ECS service for the frontend app.
+
+   **To add these secrets:**
+
+   * Go to your GitHub repository
+   * Navigate to: `Settings > Secrets and Variables > Actions`
+   * Click `New repository secret` for each item above and enter the corresponding value
+
+2. **Enable GitHub Actions**
+   If workflows are not yet enabled:
+
+   * Go to the **Actions** tab of your repository
+   * Click “I understand my workflows, go ahead and enable them”
+
+### Workflow Details
+
+The GitHub Actions workflows in this project automate the full CI/CD process, including:
+
+* **Automated unit testing** for both backend services (`auth-api` and `books-api`) using Python
+* **Frontend testing and build** with Node.js and Vite
+* **Docker image build and push** to Docker Hub for all services after successful tests
+* **Deployment to Amazon ECS** with updated images on the `production` branch
+* **Service-specific jobs** for better isolation and debugging
+* **Trigger conditions:**
+
+  * On `pull_request` to `main` or `production` branches
+  * On manual trigger (`workflow_dispatch`)
+  * On `push` to `production` branch for deployment
+
+You can customize the environment or deployment targets by adjusting secret values or modifying the workflow files under `.github/workflows/`.
+
 ## Project Structure
 ```
 .
+├── .github/
+│   ├── docker/
+│   │   ├── action.yml
+│   └── workflows
+│       ├── action-ci.yml
+│       └── deploy-ecs.yml
 ├── auth-api/
 │   ├── Dockerfile
 │   ├── app.py
+│   ├── db.py
+│   ├── routes.py
+│   ├── tests/
 │   └── requirements.txt
 ├── books-api/
 │   ├── Dockerfile
 │   ├── app.py
+│   ├── tests/
 │   └── requirements.txt
-├── env/
-│   ├── auth.env
-│   └── books.env
 ├── front-end/
 │   ├── Dockerfile
+│   ├── Dockerfile.dev
+│   ├── README.md
+│   ├── eslint.config.js
+│   ├── index.html
 │   ├── package.json
 │   ├── vite.config.js
 │   └── src/
 │       ├── components/
-│       │   ├── BookForm.js
-│       │   ├── BookList.js
-│       │   ├── Login.js
-│       │   ├── PrivateRoute.js
-│       │   └── Register.js
+│       │   ├── BookForm.jsx
+│       │   ├── BookList.jsx
+│       │   ├── Login.jsx
+│       │   ├── PrivateRoute.jsx
+│       │   └── Register.jsx
 │       ├── context/
-│       │   └── AuthContext.js
-│       └── App.js
+│       │   └── AuthContext.jsx
+│       └── App.jsx
+├── .env.local
 └── docker-compose.yml
 ```
 
@@ -41,11 +101,9 @@ This is a microservices-based web application for managing book information. The
 The project uses Docker Compose for easy setup and deployment. Make sure you have Docker and Docker Compose installed on your system.
 
 1. Configure environment variables:
-   - Copy the example environment files and adjust as needed:
+   - Create a .env.local file in the root directory with the following variable:
      ```bash
-     # In the env directory
-     cp auth.env.example auth.env
-     cp books.env.example books.env
+     JWT_SECRET=your_jwt_secret_here
      ```
 
 2. Build and start all services:
@@ -57,7 +115,7 @@ This will start:
 - MongoDB database
 - Authentication service on http://localhost:5000
 - Books service on http://localhost:5001
-- Frontend application on http://localhost:3000
+- Frontend application on http://localhost:3000 (development mode)
 
 ### Alternative Setup (Development)
 
@@ -143,20 +201,17 @@ The application will be available at http://localhost:5173 when running in devel
 
 ## Environment Variables
 
-### Auth Service (auth.env)
-Required variables:
-- `MONGODB_URI`: MongoDB connection string
-- `JWT_SECRET`: Secret key for JWT token generation
-- `PORT`: Service port (default: 5000)
+The project uses a single `.env.local` file in the root directory for all environment variables.
 
-### Books Service (books.env)
 Required variables:
-- `MONGODB_URI`: MongoDB connection string
-- `AUTH_SERVICE_URL`: URL of the auth service
-- `PORT`: Service port (default: 5001)
+- `MONGODB_USERNAME`: MongoDB username (default: admin)
+- `MONGODB_PASSWORD`: MongoDB password (default: secret123)
+- `MONGODB_HOST`: MongoDB host (default: mongodb)
+- `JWT_SECRET`: Secret key for JWT token generation
+- `APP_ENV`: Environment setting (development/production)
 
 ### MongoDB
-Default credentials (customize in docker-compose.yml):
+Default credentials (customize in docker-compose.yml and .env.local):
 - Username: admin
 - Password: secret123
 
