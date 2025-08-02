@@ -5,36 +5,36 @@ This is a microservices-based web application for managing book information. The
 - Books Service (books-api)
 - React Frontend (front-end)
 
+<p align="center">
+  <img src="./images/login.png" alt="Login Screen" width="30%" />
+  <img src="./images/home.png" alt="Home Screen" width="30%" />
+</p>
+
 ## CI/CD with GitHub Actions
 
 This project uses GitHub Actions for continuous integration and deployment. The workflow includes automated testing, linting, Docker image building and ECS deploying.
 
+![ECS](images/ecs.png)
+
 ### Workflow Setup
 
-1. **Add Required Secrets**
-   To enable the GitHub Actions workflows, you need to configure the following secrets in your repository:
+To enable the GitHub Actions workflows, you need to configure the following secrets in your repository:
 
-   * `JWT_SECRET_KEY`: A secure string used for signing JWT tokens in backend services.
-   * `DOCKER_USERNAME`: Your Docker Hub (or other container registry) username.
-   * `DOCKER_PASSWORD`: Your Docker Hub password or access token.
-   * `AWS_ACCESS_KEY_ID`: Access key ID of your AWS IAM user with ECS deployment permissions.
-   * `AWS_SECRET_ACCESS_KEY`: Secret access key corresponding to the AWS IAM user.
-   * `ECS_CLUSTER_NAME`: Name of your ECS cluster.
-   * `ECS_SERVICE_NAME_AUTH`: Name of the ECS service for the `auth-api`.
-   * `ECS_SERVICE_NAME_BOOKS`: Name of the ECS service for the `books-api`.
-   * `ECS_SERVICE_NAME_FRONTEND`: Name of the ECS service for the frontend app.
+* `JWT_SECRET_KEY`: A secure string used for signing JWT tokens in backend services.
+* `DOCKER_USERNAME`: Your Docker Hub (or other container registry) username.
+* `DOCKER_PASSWORD`: Your Docker Hub password or access token.
+* `AWS_ACCESS_KEY_ID`: Access key ID of your AWS IAM user with ECS deployment permissions.
+* `AWS_SECRET_ACCESS_KEY`: Secret access key corresponding to the AWS IAM user.
+* `ECS_CLUSTER_NAME`: Name of your ECS cluster.
+* `ECS_SERVICE_NAME_AUTH`: Name of the ECS service for the `auth-api`.
+* `ECS_SERVICE_NAME_BOOKS`: Name of the ECS service for the `books-api`.
+* `ECS_SERVICE_NAME_FRONTEND`: Name of the ECS service for the frontend app.
 
-   **To add these secrets:**
+**To add these secrets:**
 
-   * Go to your GitHub repository
-   * Navigate to: `Settings > Secrets and Variables > Actions`
-   * Click `New repository secret` for each item above and enter the corresponding value
-
-2. **Enable GitHub Actions**
-   If workflows are not yet enabled:
-
-   * Go to the **Actions** tab of your repository
-   * Click “I understand my workflows, go ahead and enable them”
+* Go to your GitHub repository
+* Navigate to: `Settings > Secrets and Variables > Actions`
+* Click `New repository secret` for each item above and enter the corresponding value
 
 ### Workflow Details
 
@@ -92,8 +92,10 @@ You can customize the environment or deployment targets by adjusting secret valu
 │       ├── context/
 │       │   └── AuthContext.jsx
 │       └── App.jsx
+├── .images/
 ├── .env.local
-└── docker-compose.yml
+├── docker-compose.yml
+└── README.md
 ```
 
 ## Setup and Installation
