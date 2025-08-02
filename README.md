@@ -6,15 +6,13 @@ This is a microservices-based web application for managing book information. The
 - React Frontend (front-end)
 
 <p align="center">
-  <img src="./images/login.png" alt="Login Screen" width="30%" />
-  <img src="./images/home.png" alt="Home Screen" width="30%" />
+  <img src="./images/login.png" alt="Login Screen" width="50%" />
+  <img src="./images/home.png" alt="Home Screen" width="50%" />
 </p>
 
 ## CI/CD with GitHub Actions
 
 This project uses GitHub Actions for continuous integration and deployment. The workflow includes automated testing, linting, Docker image building and ECS deploying.
-
-![ECS](images/ecs.png)
 
 ### Workflow Setup
 
