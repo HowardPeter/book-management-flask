@@ -6,8 +6,8 @@ This is a microservices-based web application for managing book information. The
 - React Frontend (front-end)
 
 <p align="center">
-  <img src="./images/login.png" alt="Login Screen" width="50%" />
-  <img src="./images/home.png" alt="Home Screen" width="50%" />
+  <img src="./images/login.png" alt="Login Screen" width="70%" />
+  <img src="./images/home.png" alt="Home Screen" width="70%" />
 </p>
 
 ## CI/CD with GitHub Actions
