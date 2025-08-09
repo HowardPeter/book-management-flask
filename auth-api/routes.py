@@ -8,7 +8,7 @@ users_collection = get_users_collection()
 def register_routes(app):
     @app.route('/', methods=['GET'])
     def root():
-        return "Flask is running!!!", 200
+        return "Flask is running!", 200
     
     @app.route('/register', methods=['POST'])
     def register():
