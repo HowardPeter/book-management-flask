@@ -5,6 +5,13 @@ on:
     branches:
       - main
       - production
+    paths-ignore:
+      - '**/README.md'
+      - '**/.dockerignore'
+      - '**/.gitignore'
+      - '**/Dockerfile'
+      - '.github/workflows/deploy-ecs.yml'
+      - '/docs/**'
   workflow_dispatch:
 
 jobs:
