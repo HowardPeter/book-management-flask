@@ -46,7 +46,7 @@ def book_routes(app):
             'publish_year': data.get('publish_year', ''),
             'user_id': get_jwt_identity()
         }
-        
+
         image_file = request.files.get('image')
         filename = save_uploaded_image(image_file, app.config['UPLOAD_FOLDER'])
 
@@ -120,12 +120,17 @@ def book_routes(app):
     @jwt_required()
     def delete_book(book_id):
         user_id = get_jwt_identity()
-        result = books_collection.delete_one({'_id': ObjectId(book_id), 'user_id': user_id})
+        deleted_book = books_collection.find_one({'_id': ObjectId(book_id), 'user_id': user_id})
+        result = books_collection.delete_one(deleted_book)
         
-        app.logger.info(f"Delete result: {result}")
-
         if result.deleted_count == 0:
             return jsonify({'error': 'Book not found'}), 404
+        
+        # Remove the image file if it exists
+        if 'image_url' in deleted_book and deleted_book['image_url'] != f"/books-api/uploads/{DEFAULT_IMAGE}":
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], deleted_book['image_url'].split('/')[-1])
+            if os.path.exists(image_path):
+                os.remove(image_path)
 
         return jsonify({'message': 'Book deleted successfully'}), 200
 
