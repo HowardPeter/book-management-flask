@@ -10,7 +10,7 @@ on:
       - '**/.gitignore'
       - '**/Dockerfile'
       - '.github/workflows/deploy-ecs.yml'
-      - '/docs/**'
+      - '/images/**'
   workflow_dispatch:
 
 permissions:
