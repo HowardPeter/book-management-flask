@@ -1,11 +1,22 @@
-from flask import request, jsonify
+from flask import request, jsonify, url_for, send_from_directory
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from bson import ObjectId
+import os
 from db import get_books_collection
+from werkzeug.utils import secure_filename
 
 books_collection = get_books_collection()
 
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
 def book_routes(app):
+    app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads')
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    
+    def allowed_file(filename):
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    
     @app.route('/', methods=['GET'])
     def root():
         return "Flask is running!", 200
@@ -24,15 +35,18 @@ def book_routes(app):
             'publish_year': data.get('publish_year', ''),
             'user_id': get_jwt_identity()
         }
-        
+
         # Handle image upload
-        if 'image' in request.files:
-            image = request.files['image']
-            # Here you would typically upload the image to a storage service
-            # and store the URL in the database
-            # For this example, we'll just store a placeholder
-            book['image_url'] = 'placeholder_url'
-        
+        if 'image' not in request.files:
+            return jsonify({"message": "Không tìm thấy file"}), 400
+
+        image = request.files['image']
+
+        if image and allowed_file(image.filename):
+            filename = secure_filename(image.filename)
+            image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            book['image_url'] = f"/books-api/uploads/{filename}"
+
         result = books_collection.insert_one(book)
         book['_id'] = str(result.inserted_id)
         return jsonify(book), 201
@@ -77,20 +91,24 @@ def book_routes(app):
         }
         
         # Handle image upload
-        if 'image' in request.files:
-            image = request.files['image']
-            # Here you would typically upload the image to a storage service
-            # and update the URL in the database
-            update_data['image_url'] = 'placeholder_url'
+        if 'image' not in request.files:
+            return jsonify({"message": "Không tìm thấy file"}), 400
+
+        image = request.files['image']
+
+        if image and allowed_file(image.filename):
+            filename = secure_filename(image.filename)
+            image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            update_data['image_url'] = f"/books-api/uploads/{filename}"
         
         result = books_collection.update_one(
             {'_id': ObjectId(book_id), 'user_id': user_id},
             {'$set': update_data}
         )
-        
+
         if result.matched_count == 0:
             return jsonify({'error': 'Book not found'}), 404
-        
+
         return jsonify({'message': 'Book updated successfully'}), 200
 
     @app.route('/books/<book_id>', methods=['DELETE'])
@@ -98,8 +116,12 @@ def book_routes(app):
     def delete_book(book_id):
         user_id = get_jwt_identity()
         result = books_collection.delete_one({'_id': ObjectId(book_id), 'user_id': user_id})
-        
+
         if result.deleted_count == 0:
             return jsonify({'error': 'Book not found'}), 404
-        
+
         return jsonify({'message': 'Book deleted successfully'}), 200
+
+    @app.route('/uploads/<filename>')
+    def uploaded_file(filename):
+        return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
