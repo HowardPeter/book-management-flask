@@ -4,11 +4,13 @@ from bson import ObjectId
 import os
 from db import get_books_collection
 from werkzeug.utils import secure_filename
+import uuid
 
 books_collection = get_books_collection()
 
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+DEFAULT_IMAGE = "empty.jpg"
 
 def book_routes(app):
     app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads')
@@ -16,6 +18,15 @@ def book_routes(app):
     
     def allowed_file(filename):
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    
+    def save_uploaded_image(file_storage, upload_folder):
+        if file_storage and allowed_file(file_storage.filename):
+            filename = secure_filename(file_storage.filename)
+            unique_filename = f"{uuid.uuid4().hex}_{filename}"
+            save_path = os.path.join(upload_folder, unique_filename)
+            file_storage.save(save_path)
+            return unique_filename
+        return None
     
     @app.route('/', methods=['GET'])
     def root():
@@ -35,17 +46,14 @@ def book_routes(app):
             'publish_year': data.get('publish_year', ''),
             'user_id': get_jwt_identity()
         }
+        
+        image_file = request.files.get('image')
+        filename = save_uploaded_image(image_file, app.config['UPLOAD_FOLDER'])
 
-        # Handle image upload
-        if 'image' not in request.files:
-            return jsonify({"message": "Không tìm thấy file"}), 400
-
-        image = request.files['image']
-
-        if image and allowed_file(image.filename):
-            filename = secure_filename(image.filename)
-            image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        if filename:
             book['image_url'] = f"/books-api/uploads/{filename}"
+        else:
+            book['image_url'] = f"/books-api/uploads/{DEFAULT_IMAGE}"
 
         result = books_collection.insert_one(book)
         book['_id'] = str(result.inserted_id)
@@ -90,16 +98,13 @@ def book_routes(app):
             'publish_year': data.get('publish_year', '')
         }
         
-        # Handle image upload
-        if 'image' not in request.files:
-            return jsonify({"message": "Không tìm thấy file"}), 400
+        image_file = request.files.get('image')
+        filename = save_uploaded_image(image_file, app.config['UPLOAD_FOLDER'])
 
-        image = request.files['image']
-
-        if image and allowed_file(image.filename):
-            filename = secure_filename(image.filename)
-            image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            update_data['image_url'] = f"/books-api/uploads/{filename}"
+        if filename:
+            update_data['image_url'] = f"/update_datas-api/uploads/{filename}"
+        else:
+            update_data['image_url'] = f"/books-api/uploads/{DEFAULT_IMAGE}"
         
         result = books_collection.update_one(
             {'_id': ObjectId(book_id), 'user_id': user_id},
@@ -116,6 +121,8 @@ def book_routes(app):
     def delete_book(book_id):
         user_id = get_jwt_identity()
         result = books_collection.delete_one({'_id': ObjectId(book_id), 'user_id': user_id})
+        
+        app.logger.info(f"Delete result: {result}")
 
         if result.deleted_count == 0:
             return jsonify({'error': 'Book not found'}), 404
