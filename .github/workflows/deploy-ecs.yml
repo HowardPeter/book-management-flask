@@ -4,6 +4,13 @@ on:
   push:
     branches:
       - production
+    paths-ignore:
+      - '**/README.md'
+      - '**/.dockerignore'
+      - '**/.gitignore'
+      - '**/Dockerfile'
+      - '.github/workflows/deploy-ecs.yml'
+      - '/images/**'
   workflow_dispatch:
 
 permissions:

@@ -34,5 +34,5 @@ def get_db():
     db = client[MONGODB_DB]
     return db
 
-def get_users_collection():
-    return get_db().users
+def get_books_collection():
+    return get_db().books
