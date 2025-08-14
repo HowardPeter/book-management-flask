@@ -1,4 +1,4 @@
-from flask import request, jsonify, url_for, send_from_directory
+from flask import request, jsonify, send_from_directory
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from bson import ObjectId
 import os
@@ -27,7 +27,13 @@ def book_routes(app):
             file_storage.save(save_path)
             return unique_filename
         return None
-    
+
+    def delete_uploaded_image(image_url):
+        if image_url and image_url != f"/books-api/uploads/{DEFAULT_IMAGE}":
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_url.split('/')[-1])
+            if os.path.exists(image_path):
+                os.remove(image_path)
+
     @app.route('/', methods=['GET'])
     def root():
         return "Flask is running!", 200
@@ -88,7 +94,7 @@ def book_routes(app):
     def update_book(book_id):
         user_id = get_jwt_identity()
         data = request.form.to_dict()
-        
+
         if not data.get('name'):
             return jsonify({'error': 'Book name is mandatory'}), 400
         
@@ -97,15 +103,19 @@ def book_routes(app):
             'author': data.get('author', ''),
             'publish_year': data.get('publish_year', '')
         }
-        
+
         image_file = request.files.get('image')
         filename = save_uploaded_image(image_file, app.config['UPLOAD_FOLDER'])
 
         if filename:
-            update_data['image_url'] = f"/update_datas-api/uploads/{filename}"
+            update_data['image_url'] = f"/books-api/uploads/{filename}"
         else:
             update_data['image_url'] = f"/books-api/uploads/{DEFAULT_IMAGE}"
-        
+
+        update_book = books_collection.find_one({'_id': ObjectId(book_id), 'user_id': user_id})
+        if update_book:
+            delete_uploaded_image(update_book.get('image_url', None))
+
         result = books_collection.update_one(
             {'_id': ObjectId(book_id), 'user_id': user_id},
             {'$set': update_data}
@@ -126,11 +136,7 @@ def book_routes(app):
         if result.deleted_count == 0:
             return jsonify({'error': 'Book not found'}), 404
         
-        # Remove the image file if it exists
-        if 'image_url' in deleted_book and deleted_book['image_url'] != f"/books-api/uploads/{DEFAULT_IMAGE}":
-            image_path = os.path.join(app.config['UPLOAD_FOLDER'], deleted_book['image_url'].split('/')[-1])
-            if os.path.exists(image_path):
-                os.remove(image_path)
+        delete_uploaded_image(deleted_book.get('image_url', None))
 
         return jsonify({'message': 'Book deleted successfully'}), 200
 
