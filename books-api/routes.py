@@ -97,7 +97,7 @@ def book_routes(app):
 
         if not data.get('name'):
             return jsonify({'error': 'Book name is mandatory'}), 400
-        
+
         update_data = {
             'name': data['name'],
             'author': data.get('author', ''),
