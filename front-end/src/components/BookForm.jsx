@@ -25,7 +25,7 @@ function BookForm() {
 
   const fetchBook = async () => {
     try {
-      const response = await axios.get(`/books/books/${id}`, {
+      const response = await axios.get(`/books-api/books/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setBook(response.data);
