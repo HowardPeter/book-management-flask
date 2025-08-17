@@ -34,8 +34,8 @@ def book_routes(app):
             if os.path.exists(image_path):
                 os.remove(image_path)
 
-    @app.route('/', methods=['GET'])
-    def root():
+    @app.route('/health', methods=['GET'])
+    def health():
         return "Flask is running!", 200
 
     @app.route('/books', methods=['POST'])

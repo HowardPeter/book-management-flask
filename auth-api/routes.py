@@ -6,8 +6,8 @@ from db import get_users_collection
 users_collection = get_users_collection()
 
 def register_routes(app):
-    @app.route('/', methods=['GET'])
-    def root():
+    @app.route('/health', methods=['GET'])
+    def health():
         return "Flask is running!", 200
     
     @app.route('/register', methods=['POST'])
