@@ -1,0 +1,4 @@
+mongodb_host = "YOUR_ATLAS_CLUSTER_URL"
+jwt_secret_key = "YOUR_JWT_SECRET"
+mongodb_password = "YOUR_ATLAS_CLUSTER_PASSWORD"
+username = "YOUR_ATLAS_CLUSTER_USERNAME"
