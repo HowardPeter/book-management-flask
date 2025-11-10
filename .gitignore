@@ -3,3 +3,5 @@
 **/uploads*
 .vscode
 *.tfvars
+.terraform
+*.tfstate
