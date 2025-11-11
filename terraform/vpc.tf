@@ -1,4 +1,4 @@
-# NOTE: Các tài nguyên network (VPC, subnet, route table,...) dùng tag.Name hiển thị trên console thay trường name
+# INFO: Các tài nguyên network (VPC, subnet, route table,...) dùng tag.Name hiển thị trên console thay trường name
 # VPC
 resource "aws_vpc" "main" {
   cidr_block           = var.vpc_cidr
@@ -20,10 +20,10 @@ resource "aws_internet_gateway" "igw" {
 
 # Public subnet
 resource "aws_subnet" "public" {
-  count                   = length(var.public_subnets)
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = var.public_subnets[count.index]
-  availability_zone       = data.aws_availability_zones.available.names[count.index]
+  count             = length(var.public_subnets)
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.public_subnets[count.index]
+  availability_zone = data.aws_availability_zones.available.names[count.index]
 
   tags = {
     Name = "${var.project_name}-public-sn-${count.index + 1}"
@@ -32,10 +32,10 @@ resource "aws_subnet" "public" {
 
 # Private subnet
 resource "aws_subnet" "private" {
-  count                   = length(var.private_subnets)
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = var.private_subnets[count.index]
-  availability_zone       = data.aws_availability_zones.available.names[count.index]
+  count             = length(var.private_subnets)
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.private_subnets[count.index]
+  availability_zone = data.aws_availability_zones.available.names[count.index]
 
   tags = {
     Name = "${var.project_name}-private-sn-${count.index + 1}"

@@ -162,10 +162,11 @@ resource "aws_ecs_service" "frontend" {
   desired_count   = 1
   launch_type     = "FARGATE"
 
+  # INFO: assign_public_ip - (Khi instance nằm ở public subnet) Gán Public IP để IGW hoạt động, private subnet instance đã có NAT gateway
   network_configuration {
-    subnets          = aws_subnet.public[*].id
-    security_groups  = [aws_security_group.frontend.id]
-    assign_public_ip = true # Gán Public IP để IGW hoạt động, service backend đã có NAT Gateway
+    subnets         = aws_subnet.private[*].id # Frontend cũng nằm trong private subnet vì đã có ALB nhận traffic từ Internet
+    security_groups = [aws_security_group.frontend.id]
+    # assign_public_ip = true
   }
 
   service_registries {

@@ -84,13 +84,3 @@ resource "aws_vpc_security_group_egress_rule" "alb_allow_all_traffic_ipv4" {
   ip_protocol       = "-1"
   description       = "Allow ALB to reach all outbound traffic"
 }
-
-# Cho phép ALB gửi traffic đến ECS frontend
-resource "aws_vpc_security_group_egress_rule" "alb_to_frontend" {
-  security_group_id            = aws_security_group.alb.id
-  referenced_security_group_id = aws_security_group.frontend.id
-  from_port                    = 80
-  to_port                      = 80
-  ip_protocol                  = "tcp"
-  description                  = "Allow ALB to reach ECS frontend service"
-}
