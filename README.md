@@ -5,10 +5,38 @@ This is a microservices-based web application for managing book information. The
 - Books Service (books-api)
 - React Frontend (front-end)
 
+## Features
+
 <p align="center">
-  <img src="./images/login.png" alt="Login Screen" width="70%" />
-  <img src="./images/home.png" alt="Home Screen" width="70%" />
+  <img src="./docs/login.png" alt="Home Screen" width="80%" />
+  <img src="./docs/home.png" alt="Home Screen" width="80%" />
 </p>
+
+- User authentication (signup/login)
+- CRUD operations for books
+- Book information includes:
+  - Name (mandatory)
+  - Author
+  - Publish year
+  - Image upload capability
+- Protected routes requiring authentication
+- MongoDB Atlas database integration
+
+## Infrastructure as Code (IaC)
+
+This project includes Infrastructure as Code by using Terraform for deploying to AWS.
+
+<p align="center">
+  <img src="./docs/infra-diagram.jpg" alt="Infrastructure Diagram" width="100%" />
+</p>
+
+The infrastructure setup provides:
+- **Amazon ECS** for containerized application deployment
+- **Application Load Balancer** for traffic distribution
+- **VPC with public/private subnets** for network isolation
+- **CloudWatch** for monitoring and logging
+- **Elastic File System** for storing book image (container volume)
+- **IAM roles and policies** for secure service communication
 
 ## CI/CD with GitHub Actions
 
@@ -67,6 +95,7 @@ You can customize the environment or deployment targets by adjusting secret valu
 │   ├── routes.py
 │   ├── tests/
 │   └── requirements.txt
+├── docs/
 ├── books-api/
 │   ├── Dockerfile
 │   ├── app.py
@@ -90,8 +119,23 @@ You can customize the environment or deployment targets by adjusting secret valu
 │       ├── context/
 │       │   └── AuthContext.jsx
 │       └── App.jsx
-├── .images/
+├── terraform/
+│   ├── .terraform/
+│   ├── .terraform.lock.hcl
+│   ├── alb.tf
+│   ├── backend.tf
+│   ├── cloud_map.tf
+│   ├── ecs.tf
+│   ├── efs.tf
+│   ├── iam.tf
+│   ├── outputs.tf
+│   ├── security_groups.tf
+│   ├── terraform.tfvars
+│   ├── terraform.tfvars.example
+│   ├── variables.tf
+│   └── vpc.tf
 ├── .env.local
+├── gitignore
 ├── docker-compose.yml
 └── README.md
 ```
@@ -161,18 +205,6 @@ npm run dev
 ```
 
 The application will be available at http://localhost:5173 when running in development mode.
-
-## Features
-
-- User authentication (signup/login)
-- CRUD operations for books
-- Book information includes:
-  - Name (mandatory)
-  - Author
-  - Publish year
-  - Image upload capability
-- Protected routes requiring authentication
-- MongoDB Atlas database integration
 
 ## API Endpoints
 
