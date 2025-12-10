@@ -1,0 +1,56 @@
+services:
+  mongodb:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: secret123
+    volumes:
+      - data:/data/db
+
+  auth:
+    build:
+      context: ./auth-api
+      target: production
+    ports:
+      - '5000:5000'
+    volumes:
+      - ./auth-api:/app:ro
+    env_file:
+     - .env.local
+     - ./auth-api/.env
+    depends_on:
+      - mongodb
+
+  books:
+    build:
+      context: ./books-api
+      target: production
+    ports:
+      - '5001:5001'
+    volumes:
+      - ./books-api:/app:ro
+      - uploads:/app/uploads
+    env_file:
+     - .env.local
+     - ./books-api/.env
+    depends_on:
+      - auth
+
+  frontend:
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile
+    ports:
+      - '3000:5173'
+    volumes:
+      - ./front-end:/app/:delegated
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - books
+      - auth
+
+volumes:
+  data:
+  uploads:

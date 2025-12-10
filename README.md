@@ -89,22 +89,31 @@ You can customize the environment or deployment targets by adjusting secret valu
 │       ├── action-ci.yml
 │       └── deploy-ecs.yml
 ├── auth-api/
+│   ├── .dockerignore
 │   ├── Dockerfile
 │   ├── app.py
 │   ├── db.py
 │   ├── routes.py
 │   ├── tests/
-│   └── requirements.txt
+│   ├── requirements.txt
+│   └── .env
 ├── docs/
 ├── books-api/
+│   ├── .dockerignore
 │   ├── Dockerfile
 │   ├── app.py
+│   ├── db.py
+│   ├── routes.py
 │   ├── tests/
-│   └── requirements.txt
+│   ├── requirements.txt
+│   └── .env
 ├── front-end/
+│   ├── conf/
+│   │    └── nginx.conf
+│   ├── public/
+│   ├── .dockerignore
 │   ├── Dockerfile
 │   ├── Dockerfile.dev
-│   ├── README.md
 │   ├── eslint.config.js
 │   ├── index.html
 │   ├── package.json
@@ -136,6 +145,7 @@ You can customize the environment or deployment targets by adjusting secret valu
 │   └── vpc.tf
 ├── .env.local
 ├── gitignore
+├── docker-compose.prod.yml
 ├── docker-compose.yml
 └── README.md
 ```
@@ -148,6 +158,25 @@ The project uses Docker Compose for easy setup and deployment. Make sure you hav
    - Create a .env.local file in the root directory with the following variable:
      ```bash
      JWT_SECRET=your_jwt_secret_here
+     ```
+   - In case of production, create .env files in `/auth-api` and `/books-api` directories:
+
+     **auth-api/.env:**
+     ```bash
+     MONGODB_USERNAME=MONGODB_ATLAS_CLUSTER_USERNAME
+     MONGODB_PASSWORD=MONGODB_ATLAS_CLUSTER_PASSWORD
+     MONGODB_HOST=<cluster>.mongodb.net
+     MONGODB_DB=users_dev
+     APP_ENV=production
+     ```
+     
+     **books-api/.env:**
+     ```bash
+     MONGODB_USERNAME=MONGODB_ATLAS_CLUSTER_USERNAME
+     MONGODB_PASSWORD=MONGODB_ATLAS_CLUSTER_PASSWORD
+     MONGODB_HOST=<cluster>.mongodb.net
+     MONGODB_DB=books_dev
+     APP_ENV=production
      ```
 
 2. Build and start all services:
@@ -230,21 +259,3 @@ The application will be available at http://localhost:5173 when running in devel
 - Environment files (.env) should never be committed to version control
 - Frontend communicates with backend services through Docker network
 - Volume mounts are used for development hot-reloading while maintaining container isolation
-
-## Environment Variables
-
-The project uses a single `.env.local` file in the root directory for all environment variables.
-
-Required variables:
-- `MONGODB_USERNAME`: MongoDB username (default: admin)
-- `MONGODB_PASSWORD`: MongoDB password (default: secret123)
-- `MONGODB_HOST`: MongoDB host (default: mongodb)
-- `JWT_SECRET`: Secret key for JWT token generation
-- `APP_ENV`: Environment setting (development/production)
-
-### MongoDB
-Default credentials (customize in docker-compose.yml and .env.local):
-- Username: admin
-- Password: secret123
-
-Note: For production deployment, ensure all passwords and secrets are changed from their default values.
