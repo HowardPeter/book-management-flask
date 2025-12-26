@@ -27,7 +27,7 @@ This is a microservices-based web application for managing book information. The
 This project includes Infrastructure as Code by using Terraform for deploying to AWS.
 
 <p align="center">
-  <img src="./docs/infra-diagram.jpg" alt="Infrastructure Diagram" width="100%" />
+  <img src="./docs/infra-diagram.png" alt="Infrastructure Diagram" width="100%" />
 </p>
 
 The infrastructure setup provides:
@@ -78,77 +78,6 @@ The GitHub Actions workflows in this project automate the full CI/CD process, in
   * On `push` to `production` branch for deployment
 
 You can customize the environment or deployment targets by adjusting secret values or modifying the workflow files under `.github/workflows/`.
-
-## Project Structure
-```
-.
-├── .github/
-│   ├── docker/
-│   │   ├── action.yml
-│   └── workflows
-│       ├── action-ci.yml
-│       └── deploy-ecs.yml
-├── auth-api/
-│   ├── .dockerignore
-│   ├── Dockerfile
-│   ├── app.py
-│   ├── db.py
-│   ├── routes.py
-│   ├── tests/
-│   ├── requirements.txt
-│   └── .env
-├── docs/
-├── books-api/
-│   ├── .dockerignore
-│   ├── Dockerfile
-│   ├── app.py
-│   ├── db.py
-│   ├── routes.py
-│   ├── tests/
-│   ├── requirements.txt
-│   └── .env
-├── front-end/
-│   ├── conf/
-│   │    └── nginx.conf
-│   ├── public/
-│   ├── .dockerignore
-│   ├── Dockerfile
-│   ├── Dockerfile.dev
-│   ├── eslint.config.js
-│   ├── index.html
-│   ├── package.json
-│   ├── vite.config.js
-│   └── src/
-│       ├── components/
-│       │   ├── BookForm.jsx
-│       │   ├── BookList.jsx
-│       │   ├── Login.jsx
-│       │   ├── PrivateRoute.jsx
-│       │   └── Register.jsx
-│       ├── context/
-│       │   └── AuthContext.jsx
-│       └── App.jsx
-├── terraform/
-│   ├── .terraform/
-│   ├── .terraform.lock.hcl
-│   ├── alb.tf
-│   ├── backend.tf
-│   ├── cloud_map.tf
-│   ├── ecs.tf
-│   ├── efs.tf
-│   ├── iam.tf
-│   ├── outputs.tf
-│   ├── security_groups.tf
-│   ├── terraform.tfvars
-│   ├── terraform.tfvars.example
-│   ├── variables.tf
-│   └── vpc.tf
-├── .env.local
-├── gitignore
-├── docker-compose.prod.yml
-├── docker-compose.yml
-└── README.md
-```
 
 ## Setup and Installation
 
